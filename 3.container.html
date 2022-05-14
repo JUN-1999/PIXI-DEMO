@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./pixi.js"></script>
+</head>
+
+<body>
+    <script src="./keyboard.js"></script>
+    <script type="text/javascript">
+        let Application = PIXI.Application;//创建场景
+        let loader = PIXI.loader;//纹理库
+        let Sprite = PIXI.Sprite;//使用图片生成纹理直接生成精灵
+        let resources = PIXI.loader.resources;//从纹理库中获得纹理生成精灵
+        let TextureCache = PIXI.utils.TextureCache; // 使用别名
+        let Rectangle = PIXI.Rectangle;        //你想从纹理中提取子图像的大小        //创建一个矩形对象来定义位置和
+        let Graphics = PIXI.Graphics;        //绘制一个图形
+
+
+        //Create a Pixi Application  创建一个场景
+        let app = new PIXI.Application({
+            width: 256,
+            height: 256,
+            antialias: true,    // default: false 反锯齿
+            transparent: false, // default: false 透明度
+            resolution: 1,  // default: 1 分辨率
+            forceCanvas: false, //使用 canvas渲染
+        });
+
+        app.renderer.backgroundColor = 0x007acc; //设置背景颜色
+        app.renderer.autoResize = true;
+        app.renderer.resize(800, 800);
+        document.body.appendChild(app.view);
+        let planet, state;
+        loader.add(["images/planet/planet-only-alpha.png", "images/planet/planet-only-alt1-alpha.png", "images/planet/planet-only-alt2-alpha.png"]).load(setup); //加载图像文件并将其转换为纹理
+
+
+        function setup() {
+
+            let id = resources["images/planet/planet-only-alpha.png", "images/planet/planet-only-alt1-alpha.png", "images/planet/planet-only-alt2-alpha.png"].texture;
+
+            let only = new Sprite(id["images/planet/planet-only-alpha.png"]);
+            only.position.set(16, 16);
+
+            let alt1 = new Sprite(id["images/planet/planet-only-alt1-alpha.png"]);
+            alt1.position.set(32, 32);
+
+            let alt2 = new Sprite(id["images/planet/planet-only-alt2-alpha.png"]);
+            alt2.position.set(64, 64);
+
+            let planetCon = new PIXI.Container(); //创建一个容器
+
+            planetCon.addChild(only)
+            planetCon.addChild(alt1)
+            planetCon.addChild(alt2)
+
+            app.stage.addChild(planetCon);
+
+
+            //绘制一个图形
+            let rectangle = new Graphics();
+            rectangle.lineStyle(4, 0xFF3300, 1);
+            rectangle.beginFill(0x66CCFF);
+            rectangle.drawRect(0, 0, 64, 64);
+            rectangle.endFill();
+            rectangle.x = 170;
+            rectangle.y = 170;
+            app.stage.addChild(rectangle);
+
+
+
+            state = play;
+            app.ticker.add(delta => gameLoop(delta));
+        }
+        function gameLoop(delta) {
+            state(delta);
+        }
+
+        function play(delte) {
+
+        }
+
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>

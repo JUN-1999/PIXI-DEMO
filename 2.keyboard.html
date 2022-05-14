@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./pixi.js"></script>
+</head>
+
+<body>
+    <script src="./keyboard.js"></script>
+    <script type="text/javascript">
+        let Application = PIXI.Application;//创建场景
+        let loader = PIXI.loader;//纹理的对象
+        let Sprite = PIXI.Sprite;//使用纹理加载精灵
+        let resources = PIXI.loader.resources;//使用纹理生成精灵
+        let TextureCache = PIXI.utils.TextureCache; // 使用别名
+        let Rectangle = PIXI.Rectangle;        //你想从纹理中提取子图像的大小        //创建一个矩形对象来定义位置和
+
+        //Create a Pixi Application  创建一个场景
+        let app = new PIXI.Application({
+            width: 256,
+            height: 256,
+            antialias: true,    // default: false 反锯齿
+            transparent: false, // default: false 透明度
+            resolution: 1,  // default: 1 分辨率
+            forceCanvas: true, //使用 canvas渲染
+        });
+
+        app.renderer.backgroundColor = 0x007acc; //设置背景颜色
+        app.renderer.autoResize = true;
+        app.renderer.resize(800, 800);
+        document.body.appendChild(app.view);
+        // let keyObject = keyboard(keyValue);//键盘监控
+        // keyObject.unsubscribe();//删除原生键盘监听
+
+        // 加载纹理  
+        loader.add(["images/qxbt.gif", "images/qxgj.png", "images/tileset.png"]).load(setup); //加载图像文件并将其转换为纹理
+        let qxbt, state;
+        function setup() {
+
+            // 七秀本体
+            qxbt = new Sprite(resources["images/qxbt.gif"].texture);
+            qxbt.vx = 0; //速度x属性
+            qxbt.vy = 0; //速度y属性
+            qxbt.position.set(0, 90); // 一起设置
+            app.stage.addChild(qxbt); //将精灵添加到场景
+
+
+            //Capture the keyboard arrow keys
+            let left = keyboard("ArrowLeft"),
+                up = keyboard("ArrowUp"),
+                right = keyboard("ArrowRight"),
+                down = keyboard("ArrowDown");
+
+                // left.unsubscribe();
+                // up.unsubscribe();
+                // right.unsubscribe();
+                // down.unsubscribe();
+
+            //Left arrow key `press` method
+            left.press = () => {
+                //Change the qxbt's velocity when the key is pressed
+                qxbt.vx = -5;
+                qxbt.vy = 0;
+            };
+
+            //Left arrow key `release` method
+            left.release = () => {
+                //If the left arrow has been released, and the right arrow isn't down,
+                //and the qxbt isn't moving vertically:
+                //Stop the qxbt
+                if (!right.isDown && qxbt.vy === 0) {
+                    qxbt.vx = 0;
+                }
+            };
+
+            //Up
+            up.press = () => {
+                qxbt.vy = -5;
+                qxbt.vx = 0;
+            };
+            up.release = () => {
+                if (!down.isDown && qxbt.vx === 0) {
+                    qxbt.vy = 0;
+                }
+            };
+
+            //Right
+            right.press = () => {
+                qxbt.vx = 5;
+                qxbt.vy = 0;
+            };
+            right.release = () => {
+                if (!left.isDown && qxbt.vy === 0) {
+                    qxbt.vx = 0;
+                }
+            };
+
+            //Down
+            down.press = () => {
+                qxbt.vy = 5;
+                qxbt.vx = 0;
+            };
+            down.release = () => {
+                if (!up.isDown && qxbt.vx === 0) {
+                    qxbt.vy = 0;
+                }
+            };
+
+            state = play;
+
+            app.ticker.add(delta => gameLoop(delta));
+
+
+        }
+        function gameLoop(delta) {
+            state(delta);
+        }
+
+        function play(delte) {
+      
+            qxbt.x += qxbt.vx;
+            qxbt.y += qxbt.vy;
+        }
+
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./pixi.js"></script>
+</head>
+
+<body>
+
+    <script type="text/javascript">
+
+
+        let Application = PIXI.Application;//创建场景
+        let loader = PIXI.loader;//纹理的对象
+        let Sprite = PIXI.Sprite;//使用纹理加载精灵
+        let resources = PIXI.loader.resources;//使用纹理生成精灵
+        let TextureCache = PIXI.utils.TextureCache; // 使用别名
+
+        //创建一个矩形对象来定义位置和
+        //你想从纹理中提取子图像的大小
+        let Rectangle = PIXI.Rectangle;
+
+        //Create a Pixi Application  创建一个场景
+        let app = new PIXI.Application({
+            width: 256,
+            height: 256,
+            antialias: true,    // default: false 反锯齿
+            transparent: false, // default: false 透明度
+            resolution: 1,  // default: 1 分辨率
+            forceCanvas: true, //使用 canvas渲染
+        });
+
+        app.renderer.backgroundColor = 0x007acc; //设置背景颜色
+
+        app.renderer.autoResize = true;
+        app.renderer.resize(800, 800);
+
+        /* 
+        如果您想让canvas画布填充整个窗口，您可以应用下面的CSS样式并将渲染器的大小调整到浏览器窗口的大小。
+
+        app.renderer.view.style.position = "absolute";
+        app.renderer.view.style.display = "block";
+        app.renderer.autoResize = true;
+        app.renderer.resize(window.innerWidth, window.innerHeight);
+        另外，请确保所有HTML元素的默认内边距和边距设置为0：
+
+        <style>* {padding: 0; margin: 0}</style>
+     */
+
+        //Add the canvas that Pixi automatically created for you to the HTML document
+        // 将场景渲染到页面上
+        document.body.appendChild(app.view);
+
+
+
+        /* 
+            舞台
+        */
+        // app.stage
+
+        /* 
+            精灵
+        */
+        // let texture = PIXI.utils.TextureCache["images/qxbt.gif"];// 加载纹理
+
+        // let sprite = new PIXI.Sprite(texture); // 使用纹理加载精灵
+        PIXI.loader.add(["images/qxbt.gif", "images/qxgj.png", "images/tileset.png"]).load(setup); //加载图像文件并将其转换为纹理
+
+        function setup() {
+            console.log('This code will run when the loader has finished loading the image');
+            console.log('这段代码将在加载程序加载完图像后运行');
+            // Pixi的开发团队建议，如果你使用loader（加载器），你应该通过引用loader的resources对象中的纹理来创建精灵，
+
+
+
+            // 七秀本体
+            let qxbt = new PIXI.Sprite(
+                PIXI.loader.resources["images/qxbt.gif"].texture
+            );
+            //改变位置
+            // qxbt.x=100;
+            // qxbt.y=100;
+            qxbt.vx = 0; //速度x属性
+            qxbt.vy = 0; //速度y属性
+            qxbt.position.set(300, 300); // 一起设置
+
+            // 改变大小
+            qxbt.width = 80;
+            qxbt.height = 80;
+
+
+            app.stage.addChild(qxbt); //将精灵添加到场景
+
+
+            // 七秀攻击
+            let qxgj = new PIXI.Sprite(
+                PIXI.loader.resources["images/qxgj.png"].texture
+            );
+            qxgj.position.set(340, 280);
+
+            // qxgj.width = 20;
+            // qxgj.height = 20;
+
+            // 缩放
+            // qxgj.scale.x=0.1;
+            // qxgj.scale.y=0.1;
+            qxgj.scale.set(0.05, 0.05);//一起设置缩放
+
+            // 锚点旋转
+            // qxgj.anchor.x = 0.5;//设置锚点x
+            // qxgj.anchor.y = 0.5;//设置锚点y
+            qxgj.anchor.set(0.5, 0.5); //一起设置锚点
+
+            // 原点旋转
+            // qxgj.pivot.set(10, 10) //你改变了它，然后旋转精灵，精灵会绕着原点旋转旋转
+
+            qxgj.rotation = 0.5;//弧度
+
+            app.stage.addChild(qxgj); //将精灵添加到场景
+
+            // qxgj.visible = false; //删除qxgj
+
+
+            /* 
+            小火箭
+             */
+            //Create the `tileset` sprite from the texture
+            let texture = TextureCache["images/tileset.png"];
+
+            //Create a rectangle object that defines the position and
+            //size of the sub-image you want to extract from the texture
+            //(`Rectangle` is an alias for `PIXI.Rectangle`)
+            let rectangle = new Rectangle(96, 64, 32, 32);
+
+            //Tell the texture to use that rectangular section
+            texture.frame = rectangle;
+
+            //Create the sprite from the texture
+            let rocket = new Sprite(texture);
+
+            //Position the rocket sprite on the canvas
+            rocket.x = 32;
+            rocket.y = 32;
+
+            //Add the rocket to the stage
+            app.stage.addChild(rocket);
+
+            //Render the stage   
+            app.renderer.render(app.stage);
+
+
+
+            /* 
+            开启游戏循环 
+            */
+
+            app.ticker.add(delta => gameLoop(delta));
+            function gameLoop(delta) {
+
+
+                qxbt.vx = 1;
+                qxbt.vy = 1;
+                //Move the cat 1 pixel 
+                qxbt.x += qxbt.vx;
+                qxbt.y += qxbt.vy;
+            }
+
+
+
+            /* 
+            另一种动画的方法
+            function gameLoop() {
+
+            //Call this `gameLoop` function on the next screen refresh
+            //(which happens 60 times per second)
+            requestAnimationFrame(gameLoop); // 这个requestAnimationFrame会在下次屏幕刷新时触发，并且触发自己实现刷新
+
+            //Move the cat
+            cat.x += 1;
+            }
+
+            //Start the loop
+            gameLoop();
+            
+            
+            */
+        }
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
