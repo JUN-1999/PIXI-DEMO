@@ -598,6 +598,13 @@ tiger.getGlobalPosition().x // 可直接获取到tiger精灵相对于舞台stage
 tiger.getGlobalPosition().y // 可直接获取到tiger精灵相对于舞台stage的y坐标
 ```
 
+全局坐标转换为本地坐标
 
+```js
+sprite.toLocal(sprite.position, anyOtherSprite)
+// 老虎和刺猬的相对位置。
+tiger.toLocal(tiger.position, hedgehog).x
+tiger.toLocal(tiger.position, hedgehog).y
+```
 
 ### 使用粒子容器ParticleContainer对精灵进行分组
