@@ -608,3 +608,19 @@ tiger.toLocal(tiger.position, hedgehog).y
 ```
 
 ### 使用粒子容器ParticleContainer对精灵进行分组
+
+```js
+// ParticleContainer 创建一个粒子容器
+let superFastSprites = new PIXI.particles.ParticleContainer();
+```
+
+**受限：**`ParticleContainer`中的精灵只有几个基本属性:`x`、`y`、`width`、`height`、`scale`、`pivot`、`alpha`、visible等等。而且，它所包含的精灵包含子元素。一个`ParticleContainer`也不能使用Pixi的高级视觉效果，如过滤器和混合模式。每个`ParticleContainer`只能使用**一个纹理**(所以如果你想要不同外观的精灵，你必须使用雪碧图)
+
+```js
+let superFastSprites = new ParticleContainer(maxSize, properties, batchSize, autoResize);
+```
+
+- maxSize：默认值为1500，想要显示更多的sprite，将其设置为更大的数字。
+-  properties：可以设置5个布尔值的对象：`scale`（缩放）, `position`（位置）, `rotation`（旋转）, `uvs`（只有当粒子需要在动画中改变纹理时，才将它设置为`true`）和`alphaAndTint`（透明度和着色器）。这些属性都是对于子画面的控制。
+- batchSize：每批渲染对象的数量，默认值与maxSize一样
+- autoResize：自动调整大小
